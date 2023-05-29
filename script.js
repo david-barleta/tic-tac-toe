@@ -3,37 +3,37 @@ function Gameboard() {
   const columns = 3;
   const board = [];
 
-  for (let i = 0; i < rows; i++) {
-    board[i] = [];
-    for (let j = 0; j < columns; j++) {
-      board[i].push(Cell());
+  const constructBoard = function() {
+    for (let i = 0; i < rows; i++) {
+      board[i] = [];
+      for (let j = 0; j < columns; j++) {
+        board[i].push(Cell());
+      }
     }
-  }
+  } 
+
+  constructBoard();
 
   const getBoard = () => board;
 
-  const addMark = function(row, column, mark) {
-    const cell = board[row][column];
-    if (cell.getValue() === 0) {
-      console.log("Valid move.");
-      cell.placeMark(mark);
-      return "valid";
-    } else {
-      console.log(`Invalid cell. Please choose a different cell.`)
-      return "invalid"; 
-    }
+  const resetBoard = function() {
+    board.length = 0;
+    constructBoard();
   }
 
-  const printBoard = () => {
-    const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
-    console.log(boardWithCellValues);
+  const addMark = function(row, column, mark) {
+    const cell = board[row][column];
+    if (cell.getValue() === "") {
+      cell.placeMark(mark);
+      return;
+    } else {
+      return "invalid"; 
+    }
   }
 
   const checkWin = function(mark) {
     const boardToCheck = board.map((row) => row.map((cell) => cell.getValue()))
     const combinationToCheck = [mark, mark, mark];
-
-    console.log("Checking horizontal cells...");
 
     for (let i = 0; i < 3; i++) {
       const cellsToCheck = boardToCheck[i];
@@ -44,8 +44,6 @@ function Gameboard() {
       }
     }
 
-    console.log("Checking vertical cells...");
-
     for (let i = 0; i < 3; i++) {
       const cellsToCheck = [boardToCheck[0][i], boardToCheck[1][i], boardToCheck[2][i]];
       const result = compareMarks(cellsToCheck, combinationToCheck);
@@ -54,8 +52,6 @@ function Gameboard() {
         return mark;
       }
     }
-
-    console.log("Checking diagonal cells...");
 
     const diagonalCells1 = [boardToCheck[0][0], boardToCheck[1][1], boardToCheck[2][2]];
     const diagonalCells2 = [boardToCheck[0][2], boardToCheck[1][1], boardToCheck[2][0]];
@@ -86,13 +82,11 @@ function Gameboard() {
     });
   }
 
-  return { getBoard, addMark, printBoard, checkWin };
+  return { getBoard, resetBoard, addMark, checkWin};
 }
 
-const board = new Gameboard();
-
 function Cell() {
-  let value = 0 // Why let?
+  let value = ""; // Why let?
 
   const getValue = () => value;
 
@@ -128,44 +122,87 @@ function GameController(
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
-  const printNewRound = () => {
-    board.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
-  const playRound = function(row, column) {
-
-    if (row > 2 || column > 2) {
-      console.log("Invalid cell. Please choose a different cell.");
-      return;
-    }
-
-    console.log(`Placing ${getActivePlayer().name}'s mark into row ${row} column ${column}...`);
-    
-    const result = board.addMark(row, column, getActivePlayer().mark);
-    
-    if (result == "valid") {
-      
-      const winner = board.checkWin(getActivePlayer().mark);
-
-      if (winner == getActivePlayer().mark) {
-        console.log(`${getActivePlayer().name} has won the game.`);
-        activePlayer = players[0];
-        return;
-      }
-
-      switchPlayerTurn();
-    }
-
-    printNewRound();
+  const resetGame = function() {
+    activePlayer = players[0];
+    board.resetBoard();
   }
 
-  printNewRound();
+  const playRound = function(row, column) {
+    
+    const move = board.addMark(row, column, getActivePlayer().mark);
+    
+    if (move == "invalid") {
+      return "invalid-move";
+    } else {
+      const winningMark = board.checkWin(getActivePlayer().mark);
+
+      if (winningMark == getActivePlayer().mark) {
+        const winner = getActivePlayer().name;
+        resetGame();
+        return winner;
+      } else {
+        switchPlayerTurn();
+      }
+    }
+  }
 
   return {
     playRound,
-    getActivePlayer
+    getActivePlayer,
+    getBoard: board.getBoard
   };
 }
 
-const game = GameController();
+function ScreenController() {
+  const game = GameController();
+  const playerTurnLabel = document.querySelector(".turn");
+  const messageContainer = document.querySelector(".message");
+  const boardDiv = document.querySelector(".board");
+
+  const updateScreen = () => {
+
+    boardDiv.textContent = "";
+
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+    
+    playerTurnLabel.textContent = `${activePlayer.name}'s turn...`
+
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, columnIndex) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = rowIndex;
+        cellButton.dataset.column = columnIndex;
+        cellButton.textContent = cell.getValue();
+        boardDiv.appendChild(cellButton);
+      })
+    })
+  }
+
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+
+    if (!selectedRow || !selectedColumn) {
+      messageContainer.textContent = "Invalid cell. Please choose a different cell.";
+      return;
+    }
+
+    const roundResult = game.playRound(selectedRow, selectedColumn);
+
+    if (roundResult == "invalid-move") {
+      messageContainer.textContent = "Invalid cell. Please choose a different cell.";
+    } else if (roundResult == "Player One" || roundResult == "Player Two") {
+      messageContainer.textContent = `${roundResult} won the game!`;
+    }
+
+    updateScreen();
+  }
+
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  updateScreen(); // Initial render
+}
+
+ScreenController();
