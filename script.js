@@ -174,7 +174,17 @@ function ScreenController() {
         cellButton.classList.add("cell");
         cellButton.dataset.row = rowIndex;
         cellButton.dataset.column = columnIndex;
-        cellButton.textContent = cell.getValue();
+        
+        const cellMarkIcon = document.createElement("img");
+        const cellMarkValue = cell.getValue();
+
+        if (cellMarkValue == "X") {
+          cellMarkIcon.src = "images/pretzel.png";
+        } else if (cellMarkValue == "O") {
+          cellMarkIcon.src = "images/donut.png";
+        }
+
+        cellButton.appendChild(cellMarkIcon);
         boardDiv.appendChild(cellButton);
       })
     })
@@ -183,6 +193,9 @@ function ScreenController() {
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
+    const selectedCell = e.target;
+
+    console.log(selectedCell);
 
     if (!selectedRow || !selectedColumn) {
       messageContainer.textContent = "Invalid cell. Please choose a different cell.";

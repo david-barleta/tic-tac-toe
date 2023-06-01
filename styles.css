@@ -1,22 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap');
+
+:root {
+  --bg-color: #ffc2d1;
+  --text-color: #1c1c1e;
+}
+
+body {
+  display: grid;
+  grid-template-rows: repeat(2, min-content);
+  font-family: "Coming Soon", sans-serif;
+  justify-content: center;
+  align-content: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+header {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+main {
+  display: grid;
+  grid-template-rows: repeat(3, min-content);
+  row-gap: 15px;
+  justify-items: center;
+  font-size: 0.8rem;
+}
+
 .board {
   display: grid;
-  height: 500px;
-  width: 500px;
+  height: 400px;
+  width: 400px;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  border: 1px solid black;
-  gap: 2px;
+  gap: 15px;
   padding: 2px;
-  background-color: blanchedalmond;
 }
 
 .cell {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  font-size: 2rem;
-  border: 1px solid grey;
-  background-color: aliceblue;
+  border: 2px dashed var(--text-color);
+  border-radius: 15px;
+  padding: 20px;
+  background-color: var(--bg-color);
   cursor: pointer;
 }
