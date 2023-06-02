@@ -68,6 +68,20 @@ function Gameboard() {
       return mark;
     }
 
+    let emptyCells = 9;
+
+    boardToCheck.map(function(row) {
+      row.map(function(cell) {
+        if (cell != "") {
+          emptyCells--;
+        }
+      })
+    })
+
+    if (emptyCells == 0) {
+      return "tie";
+    }
+
     return;
   }
 
@@ -86,7 +100,7 @@ function Gameboard() {
 }
 
 function Cell() {
-  let value = ""; // Why let?
+  let value = "";
 
   const getValue = () => value;
 
@@ -140,6 +154,9 @@ function GameController(
         const winner = getActivePlayer().name;
         resetGame();
         return winner;
+      } else if (winningMark == "tie") {
+        resetGame();
+        return "tie";
       } else {
         switchPlayerTurn();
       }
@@ -193,9 +210,6 @@ function ScreenController() {
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
-    const selectedCell = e.target;
-
-    console.log(selectedCell);
 
     if (!selectedRow || !selectedColumn) {
       messageContainer.textContent = "Invalid cell. Please choose a different cell.";
@@ -208,6 +222,8 @@ function ScreenController() {
       messageContainer.textContent = "Invalid cell. Please choose a different cell.";
     } else if (roundResult == "Player One" || roundResult == "Player Two") {
       messageContainer.textContent = `${roundResult} won the game!`;
+    } else if (roundResult == "tie") {
+      messageContainer.textContent = `Tie! No one won the game.`;
     }
 
     updateScreen();
@@ -219,3 +235,9 @@ function ScreenController() {
 }
 
 ScreenController();
+
+// Intro screen where players can input their names
+// Start game and restart game function
+// Formal winner screen
+// Play again function
+// Improve design
