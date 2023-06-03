@@ -136,7 +136,7 @@ function GameController(
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
-  const resetGame = function() {
+  const restartGame = function() {
     activePlayer = players[0];
     board.resetBoard();
   }
@@ -152,10 +152,10 @@ function GameController(
 
       if (winningMark == getActivePlayer().mark) {
         const winner = getActivePlayer().name;
-        resetGame();
+        restartGame();
         return winner;
       } else if (winningMark == "tie") {
-        resetGame();
+        restartGame();
         return "tie";
       } else {
         switchPlayerTurn();
@@ -164,17 +164,19 @@ function GameController(
   }
 
   return {
-    playRound,
     getActivePlayer,
+    restartGame,
+    playRound,
     getBoard: board.getBoard
   };
 }
 
 function ScreenController() {
   const game = GameController();
-  const playerTurnLabel = document.querySelector(".turn");
-  const messageContainer = document.querySelector(".message");
-  const boardDiv = document.querySelector(".board");
+  const playerTurnLabel = document.querySelector("#turn");
+  const messageContainer = document.querySelector("#message");
+  const boardDiv = document.querySelector("#board");
+  const restartButton = document.querySelector("#restart");
 
   const updateScreen = () => {
 
@@ -183,6 +185,7 @@ function ScreenController() {
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
     
+    messageContainer.textContent = "Click a cell to place a mark.";
     playerTurnLabel.textContent = `${activePlayer.name}'s turn...`
 
     board.forEach((row, rowIndex) => {
@@ -229,7 +232,13 @@ function ScreenController() {
     updateScreen();
   }
 
+  function clickHandleRestart() {
+    game.restartGame();
+    updateScreen();
+  }
+
   boardDiv.addEventListener("click", clickHandlerBoard);
+  restartButton.addEventListener("click", clickHandleRestart);
 
   updateScreen(); // Initial render
 }

@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles&display=swap');
 
 :root {
-  --bg-color: #ffc2d1;
+  --bg-color: #dfffd8;
+  --cell-color: #ffc2d1;
   --text-color: #1c1c1e;
 }
 
@@ -28,7 +29,7 @@ main {
   font-size: 0.8rem;
 }
 
-.board {
+#board {
   display: grid;
   height: 400px;
   width: 400px;
@@ -45,6 +46,14 @@ main {
   border: 2px dashed var(--text-color);
   border-radius: 15px;
   padding: 20px;
-  background-color: var(--bg-color);
+  background-color: var(--cell-color);
   cursor: pointer;
+}
+
+#restart {
+  border: none;
+  background: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.5rem;
 }
