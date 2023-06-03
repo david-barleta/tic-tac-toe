@@ -152,10 +152,8 @@ function GameController(
 
       if (winningMark == getActivePlayer().mark) {
         const winner = getActivePlayer().name;
-        restartGame();
         return winner;
       } else if (winningMark == "tie") {
-        restartGame();
         return "tie";
       } else {
         switchPlayerTurn();
@@ -224,9 +222,15 @@ function ScreenController() {
     if (roundResult == "invalid-move") {
       messageContainer.textContent = "Invalid cell. Please choose a different cell.";
     } else if (roundResult == "Player One" || roundResult == "Player Two") {
-      messageContainer.textContent = `${roundResult} won the game!`;
+      updateScreen();
+      playerTurnLabel.textContent = `${roundResult} won the game!`;
+      messageContainer.textContent = "Click the restart button below to start a new game.";
+      return;
     } else if (roundResult == "tie") {
-      messageContainer.textContent = `Tie! No one won the game.`;
+      updateScreen();
+      playerTurnLabel.textContent = `Tie! No one won the game.`;
+      messageContainer.textContent = "Click the restart button below to start a new game.";
+      return;
     }
 
     updateScreen();
@@ -246,7 +250,6 @@ function ScreenController() {
 ScreenController();
 
 // Intro screen where players can input their names
-// Start game and restart game function
 // Formal winner screen
 // Play again function
 // Improve design
