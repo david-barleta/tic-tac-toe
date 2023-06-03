@@ -224,12 +224,14 @@ function ScreenController() {
     } else if (roundResult == "Player One" || roundResult == "Player Two") {
       updateScreen();
       playerTurnLabel.textContent = `${roundResult} won the game!`;
-      messageContainer.textContent = "Click the restart button below to start a new game.";
+      restartButton.textContent = "Play Again";
+      messageContainer.textContent = "Click play again below to start a new game.";
       return;
     } else if (roundResult == "tie") {
       updateScreen();
       playerTurnLabel.textContent = `Tie! No one won the game.`;
-      messageContainer.textContent = "Click the restart button below to start a new game.";
+      restartButton.textContent = "Play Again";
+      messageContainer.textContent = "Click play again below to start a new game.";
       return;
     }
 
@@ -250,6 +252,4 @@ function ScreenController() {
 ScreenController();
 
 // Intro screen where players can input their names
-// Formal winner screen
-// Play again function
 // Improve design
