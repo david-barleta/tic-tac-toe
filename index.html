@@ -14,10 +14,21 @@
     <h1>Tic-Tac-Toe</h1>
   </header>
   <main>
-    <h1 id="turn"></h1>
-    <h1 id="message"></h1>
-    <div id="board"></div>
-    <button id="restart">Restart Game</button>
+    <h1 id="turn">Enter the names for players 1 and 2. Pretzel (X) goes first.</h1>
+    <h1 id="message">Click start game below to start playing.</h1>
+    <div id="main-screen">
+      <div id="player-selection">
+        <div class="player">
+          <img class="player-icon" src="images/pretzel.png" alt="pretzel mark">
+          <input type="text" id="player-one" name="player-one" placeholder="Player 1"/>
+        </div>
+        <div class="player">
+          <img class="player-icon" src="images/donut.png" alt="donut mark">
+          <input type="text" id="player-two" name="player-two" placeholder="Player 2"/>
+        </div>
+      </div>
+    </div>
+    <button id="start">Start Game</button>
   </main>
 </body>
 </html>

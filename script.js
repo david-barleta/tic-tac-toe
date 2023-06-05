@@ -111,19 +111,16 @@ function Cell() {
   return { getValue, placeMark };
 }
 
-function GameController(
-  playerOneName = "Player One", // Why are the arguments initialized here?
-  playerTwoName = "Player Two"
-) {
+function GameController() {
   const board = new Gameboard();
 
   const players = [
     {
-      name: playerOneName,
+      name: "Player 1",
       mark: "X"
     },
     {
-      name: playerTwoName,
+      name: "Player 2",
       mark: "O"
     }
   ];
@@ -131,6 +128,11 @@ function GameController(
   let activePlayer = players[0];
 
   const getActivePlayer = () => activePlayer;
+
+  const setPlayerNames = function(playerOne, playerTwo) {
+    players[0].name = playerOne;
+    players[1].name = playerTwo;
+  }
 
   const switchPlayerTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
@@ -163,6 +165,7 @@ function GameController(
 
   return {
     getActivePlayer,
+    setPlayerNames,
     restartGame,
     playRound,
     getBoard: board.getBoard
@@ -173,15 +176,16 @@ function ScreenController() {
   const game = GameController();
   const playerTurnLabel = document.querySelector("#turn");
   const messageContainer = document.querySelector("#message");
-  const boardDiv = document.querySelector("#board");
-  const restartButton = document.querySelector("#restart");
+  const mainScreen = document.querySelector("#main-screen");
+  const startButton = document.querySelector("#start");
+  let gameStarted = false;
 
   const updateScreen = () => {
-
-    boardDiv.textContent = "";
-
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
+    const boardDiv = document.querySelector("#board");
+
+    boardDiv.textContent = "";
     
     messageContainer.textContent = "Click a cell to place a mark.";
     playerTurnLabel.textContent = `${activePlayer.name}'s turn...`
@@ -224,13 +228,13 @@ function ScreenController() {
     } else if (roundResult == "Player One" || roundResult == "Player Two") {
       updateScreen();
       playerTurnLabel.textContent = `${roundResult} won the game!`;
-      restartButton.textContent = "Play Again";
+      startButton.textContent = "Play Again";
       messageContainer.textContent = "Click play again below to start a new game.";
       return;
     } else if (roundResult == "tie") {
       updateScreen();
       playerTurnLabel.textContent = `Tie! No one won the game.`;
-      restartButton.textContent = "Play Again";
+      startButton.textContent = "Play Again";
       messageContainer.textContent = "Click play again below to start a new game.";
       return;
     }
@@ -238,18 +242,40 @@ function ScreenController() {
     updateScreen();
   }
 
-  function clickHandleRestart() {
-    game.restartGame();
-    updateScreen();
+  function clickHandlerStart() {
+    if (gameStarted == true) {
+      location.reload();
+    } else {
+      const playerOneName = document.querySelector("#player-one").value;
+      const playerTwoName = document.querySelector("#player-two").value;
+
+      if (playerOneName != "" && playerTwoName != "") {
+        game.setPlayerNames(playerOneName, playerTwoName);
+      } else if (playerOneName == "" && playerTwoName != "") {
+        game.setPlayerNames("Player 1", playerTwoName);
+      } else if (playerOneName != "" && playerTwoName == "") {
+        game.setPlayerNames(playerOneName, "Player 2");
+      }
+
+      const playerSelection = document.querySelector("#player-selection");
+      playerSelection.remove();
+
+      const board = document.createElement("div");
+      board.id = "board";
+      mainScreen.appendChild(board);
+      board.addEventListener("click", clickHandlerBoard);
+
+      startButton.textContent = "Restart Game";
+
+      gameStarted = true;
+
+      updateScreen();      
+    }
   }
 
-  boardDiv.addEventListener("click", clickHandlerBoard);
-  restartButton.addEventListener("click", clickHandleRestart);
-
-  updateScreen(); // Initial render
+  startButton.addEventListener("click", clickHandlerStart);
 }
 
 ScreenController();
 
-// Intro screen where players can input their names
-// Improve design
+// Fix some bugs: Player can still place marks on cell even after a game is done
